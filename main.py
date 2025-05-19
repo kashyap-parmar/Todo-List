@@ -85,6 +85,57 @@ def listTodos():
     except Exception as e:
             print(f"Could not read {filename}: {e}")
        
+def listTodosFforSelect(ele):
+    print(f"{ele['id']} : {ele['Title']}")
+    pass
+
+def markAsCompleted():
+    print('''
+    These are some group of the todo tasks, In which from do you wanna mark as complete ??
+    ''')
+    listOfFiles = os.listdir(folder_path)
+    useOptions = {}
+
+    for index, file in enumerate(listOfFiles):
+        useOptions.update({ index+1 : file })
+        print(f"{index + 1}. {file}")
+
+    userMarkChoice = getUserChoice(useOptions)
+
+    filename = useOptions[userMarkChoice]
+
+    file_path = os.path.join(folder_path, filename)
+
+    try:
+        with open(file_path, "r") as file:
+            content = file.read()
+            if not content.strip():
+                raise ValueError("File is empty")
+
+            todos = json.loads(content)
+
+            for todo in todos:
+                listTodosFforSelect(todo)
+
+        userTodoChoice = getUserChoice(list(map(lambda x: x['id'],todos)))
+        
+        for todo in todos:
+            if todo["id"] == userTodoChoice:
+                todo["isCompleted"] = True
+                break
+
+        with open(file_path, "w") as file:
+            json.dump(todos, file, indent=4)
+        print(f"Todo with id {userTodoChoice} marked as complete.")
+            
+    except Exception as e:
+            print(f"Could not read {filename}: {e}")
+
+def editTodo():
+    pass
+
+def deleteTodo():
+    pass
 
 print(
     """
@@ -102,9 +153,16 @@ You can perform these operations:
 
 userChoice = getUserChoice(operation)
 
-if int(userChoice) == 1 :
-    listTodos()
-elif int(userChoice) == 2 :
-    addTodo()
+match int(userChoice):
+    case 1:
+        listTodos()
+    case 2:
+        addTodo()
+    case 3:
+        editTodo()
+    case 4:
+        markAsCompleted()
+    case 5:
+        deleteTodo()
 
 
