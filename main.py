@@ -2,20 +2,26 @@
 import json
 import os
 from datetime import datetime
+from services.addTodo import addTodo
+
+# ------------------------------------------------------
 
 operation = {
     1: "listTodo",
     2: "addTodo",
-    3: "editTodo",
+    3: "edit_todo",
     4: "completeTodo",
-    5: "deleteTodo",
+    5: "delete_todo",
 }
 
-current_dir = os.getcwd()
-folder_name = "My_Todos"
-folder_path = os.path.join(current_dir, folder_name)
 
-def getUserChoice(arr):
+folder_name = "My_Todos"
+current_dir = os.getcwd()
+folder_path = os.path.join(current_dir, folder_name)
+os.makedirs(folder_path, exist_ok = True)
+
+
+def get_user_choice(arr):
     while True:
         userchoice = input("Enter your operation number : ")
         try:
@@ -26,70 +32,40 @@ def getUserChoice(arr):
         except Exception as e:
             print("Enter a valid number")
 
-def addTodo():
-    title = input("Enter your to-do title here :")
-    description = input("Enter your to-do description here :")
 
-    os.makedirs(folder_path, exist_ok=True)
-
-    today_str = datetime.today().strftime("%d-%b-%Y")
-
-    file_path = os.path.join(folder_path, f"{today_str}_todo.json")
-
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        with open(file_path, "r") as json_file:
-            try:
-                data = json.load(json_file)
-            except json.JSONDecodeError:
-                data = []
-    else:
-        data = []
-
-    # Ensure it's a list to append to
-    if not isinstance(data, list):
-        data = [data]
-
-    data.append({
-        "Title" : title, 
-        "Description" : description, 
-        "id": len(data) + 1
-    })
-
-    with open(file_path, "w") as json_file:
-        json.dump(data, json_file, indent=4)
-    
-    print('''
-    Yeeey ! You have successfully Added your task !!!
-    ''')
-
-def listTodos():
-    print('''
-    These are the list of the todo tasks, Which one do you wannt to open ??
-    ''')
+def list_todos():
     listOfFiles = os.listdir(folder_path)
     useOptions = {}
 
-    for index, file in enumerate(listOfFiles):
-        useOptions.update({ index+1 : file })
-        print(f"{index + 1}. {file}")
+    if (len(listOfFiles) > 0):
+        print('''
+    These are the list of the todo tasks, Which one do you wannt to open ??
+    ''')
+        for index, file in enumerate(listOfFiles):
+            useOptions.update({ index+1 : file })
+            print(f"{index + 1}. {file}")
 
-    userListChoice = getUserChoice(useOptions)
+        userListChoice = get_user_choice(useOptions)
 
-    filename = useOptions[userListChoice]
+        filename = useOptions[userListChoice]
 
-    file_path = os.path.join(folder_path, filename)
-    try:
-        with open(file_path, "r") as file:
-            content = file.read()
-            print(f'''{content}''')
-    except Exception as e:
-            print(f"Could not read {filename}: {e}")
-       
-def listTodosFforSelect(ele):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            with open(file_path, "r") as file:
+                content = file.read()
+                print(f'''{content}''')
+        except Exception as e:
+                print(f"Could not read {filename}: {e}")
+    else:
+        print("No such To-Do Added Yet !!")
+
+
+def list_todos_for_select(ele):
     print(f"{ele['id']} : {ele['Title']}")
     pass
 
-def markAsCompleted():
+
+def mark_as_completed():
     print('''
     These are some group of the todo tasks, In which from do you wanna mark as complete ??
     ''')
@@ -100,7 +76,7 @@ def markAsCompleted():
         useOptions.update({ index+1 : file })
         print(f"{index + 1}. {file}")
 
-    userMarkChoice = getUserChoice(useOptions)
+    userMarkChoice = get_user_choice(useOptions)
 
     filename = useOptions[userMarkChoice]
 
@@ -115,9 +91,9 @@ def markAsCompleted():
             todos = json.loads(content)
 
             for todo in todos:
-                listTodosFforSelect(todo)
+                list_todos_for_select(todo)
 
-        userTodoChoice = getUserChoice(list(map(lambda x: x['id'],todos)))
+        userTodoChoice = get_user_choice(list(map(lambda x: x['id'],todos)))
         
         for todo in todos:
             if todo["id"] == userTodoChoice:
@@ -131,11 +107,14 @@ def markAsCompleted():
     except Exception as e:
             print(f"Could not read {filename}: {e}")
 
-def editTodo():
+
+def edit_todo():
     pass
 
-def deleteTodo():
+
+def delete_todo():
     pass
+
 
 print(
     """
@@ -151,18 +130,19 @@ You can perform these operations:
 )
 
 
-userChoice = getUserChoice(operation)
+user_choice = get_user_choice(operation)
 
-match int(userChoice):
+
+match int(user_choice):
     case 1:
-        listTodos()
+        list_todos()
     case 2:
-        addTodo()
+        addTodo(folder_path)
     case 3:
-        editTodo()
+        edit_todo()
     case 4:
-        markAsCompleted()
+        mark_as_completed()
     case 5:
-        deleteTodo()
+        delete_todo()
 
 
