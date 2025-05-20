@@ -1,8 +1,11 @@
 # To Do List
-import json
 import os
-from datetime import datetime
 from services.addTodo import addTodo
+from services.markAsCompleted import mark_as_completed
+from services.getUserChoice import get_user_choice
+from services.listTodos import list_todos
+from services.editTodo import edit_todo
+from services.deleteTodo import delete_todo
 
 # ------------------------------------------------------
 
@@ -19,101 +22,6 @@ folder_name = "My_Todos"
 current_dir = os.getcwd()
 folder_path = os.path.join(current_dir, folder_name)
 os.makedirs(folder_path, exist_ok = True)
-
-
-def get_user_choice(arr):
-    while True:
-        userchoice = input("Enter your operation number : ")
-        try:
-            if int(userchoice) not in arr:
-                print("This operation is not listed Yet !!")
-            elif int(userchoice) in arr:
-                return int(userchoice)
-        except Exception as e:
-            print("Enter a valid number")
-
-
-def list_todos():
-    listOfFiles = os.listdir(folder_path)
-    useOptions = {}
-
-    if (len(listOfFiles) > 0):
-        print('''
-    These are the list of the todo tasks, Which one do you wannt to open ??
-    ''')
-        for index, file in enumerate(listOfFiles):
-            useOptions.update({ index+1 : file })
-            print(f"{index + 1}. {file}")
-
-        userListChoice = get_user_choice(useOptions)
-
-        filename = useOptions[userListChoice]
-
-        file_path = os.path.join(folder_path, filename)
-        try:
-            with open(file_path, "r") as file:
-                content = file.read()
-                print(f'''{content}''')
-        except Exception as e:
-                print(f"Could not read {filename}: {e}")
-    else:
-        print("No such To-Do Added Yet !!")
-
-
-def list_todos_for_select(ele):
-    print(f"{ele['id']} : {ele['Title']}")
-    pass
-
-
-def mark_as_completed():
-    print('''
-    These are some group of the todo tasks, In which from do you wanna mark as complete ??
-    ''')
-    listOfFiles = os.listdir(folder_path)
-    useOptions = {}
-
-    for index, file in enumerate(listOfFiles):
-        useOptions.update({ index+1 : file })
-        print(f"{index + 1}. {file}")
-
-    userMarkChoice = get_user_choice(useOptions)
-
-    filename = useOptions[userMarkChoice]
-
-    file_path = os.path.join(folder_path, filename)
-
-    try:
-        with open(file_path, "r") as file:
-            content = file.read()
-            if not content.strip():
-                raise ValueError("File is empty")
-
-            todos = json.loads(content)
-
-            for todo in todos:
-                list_todos_for_select(todo)
-
-        userTodoChoice = get_user_choice(list(map(lambda x: x['id'],todos)))
-        
-        for todo in todos:
-            if todo["id"] == userTodoChoice:
-                todo["isCompleted"] = True
-                break
-
-        with open(file_path, "w") as file:
-            json.dump(todos, file, indent=4)
-        print(f"Todo with id {userTodoChoice} marked as complete.")
-            
-    except Exception as e:
-            print(f"Could not read {filename}: {e}")
-
-
-def edit_todo():
-    pass
-
-
-def delete_todo():
-    pass
 
 
 print(
@@ -135,14 +43,14 @@ user_choice = get_user_choice(operation)
 
 match int(user_choice):
     case 1:
-        list_todos()
+        list_todos(folder_path)
     case 2:
         addTodo(folder_path)
     case 3:
-        edit_todo()
+        edit_todo(folder_path)
     case 4:
-        mark_as_completed()
+        mark_as_completed(folder_path)
     case 5:
-        delete_todo()
+        delete_todo(folder_path)
 
 

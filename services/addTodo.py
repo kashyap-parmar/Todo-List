@@ -2,6 +2,8 @@ import json
 import os
 from datetime import datetime
 
+# ----------------------------------------------------------------------------
+
 def addTodo(folder_path):
     title = input("Enter your to-do title here :")
     description = input("Enter your to-do description here :")
