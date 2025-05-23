@@ -1,37 +1,46 @@
 import os
 import json
 from services.getUserChoice import get_user_choice
+from services.selectTodo import select_todo
 
 # --------------------------------------------------
 
 def edit_todo(folder_path):
-    print('''
-    These are some group of the todo tasks, In which from do you wanna mark as complete ??
-    ''')
-    listOfFiles = os.listdir(folder_path)
-    useOptions = {}
+    
+    data = select_todo(folder_path)
 
-    for index, file in enumerate(listOfFiles):
-        useOptions.update({ index+1 : file })
-        print(f"{index + 1}. {file}")
+    print(data)
+    # for todo in data.todos:
+    #     print(f"{todo['id']} : {todo['Title']}")
 
-    userMarkChoice = get_user_choice(useOptions)
+    # userTodoChoice = get_user_choice([1,2])
 
-    filename = useOptions[userMarkChoice]
+    # for todo in data.todos:
+    #     if (todo['id'] == userTodoChoice):
+    #         selectedTodo = todo
 
-    file_path = os.path.join(folder_path, filename)
+    # print('''
+    # What do you want to edit? Title or Descriptions? 
+    # 1. Title
+    # 2. Descriptions
+    # ''')
 
-    try:
-        with open(file_path, "r") as file:
-            content = file.read()
-            if not content.strip():
-                raise ValueError("File is empty")
+    # userEditChoice = get_user_choice([1,2])
 
-            todos = json.loads(content)
 
-            for todo in todos:
-                print(f"{todo['id']} : {todo['Title']}")
+    # if (userEditChoice == 1) :
+    #     selectedTodo["Title"] = input("Enter your Title here :")
+    # else:
+    #     selectedTodo["Description"] = input("Enter your Description here :")
 
-        userTodoChoice = get_user_choice(list(map(lambda x: x['id'],todos)))
-    except Exception as e:
-        print(f"Could not read {filename}: {e}")
+    # with open(file_path, "w") as file:
+    #     for todo in todos:
+    #         if todo['id'] == selectedTodo["id"]:
+    #             todo = selectedTodo
+
+    #     json.dump(todos, file, indent=4)
+    
+    # print("todos", todos)
+
+    # except Exception as e:
+    #     print(f"Could not read {filename}: {e}")
