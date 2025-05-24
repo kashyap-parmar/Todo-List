@@ -11,7 +11,7 @@ from services.deleteTodo import delete_todo
 
 operation = {
     1: "listTodo",
-    2: "addTodo",
+    2: "addTodo",   +
     3: "edit_todo",
     4: "completeTodo",
     5: "delete_todo",
