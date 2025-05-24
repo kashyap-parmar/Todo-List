@@ -1,6 +1,6 @@
 def get_user_choice(arr):
     while True:
-        userchoice = input("Enter your operation number : ")
+        userchoice = input("Select a number which you seeing above to this: ")
         try:
             if int(userchoice) not in arr:
                 print("This operation is not listed Yet !!")

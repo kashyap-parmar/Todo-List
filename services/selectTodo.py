@@ -11,7 +11,7 @@ def select_todo(folder_path):
 
     if len(listOfFiles) > 0:
         print('''
-    These are some group of the todo tasks, In which from do you wanna edit ??
+    These are some group of the todo tasks, In which from do you wanna perform operation ??
     ''')
         for index, file in enumerate(listOfFiles):
             useOptions.update({ index+1 : file })
@@ -28,6 +28,9 @@ def select_todo(folder_path):
 
     try:
         with open(file_path, "r") as file:
+            if os.path.getsize(file_path) == 0:
+                print(f"⚠️  Could not read {os.path.basename(file_path)}: File is empty")
+                return None
             content = file.read()
             if not content.strip():
                 raise ValueError("File is empty")
